@@ -20,7 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `no9ati_db`
 --
-
+create Database if not exists `no9ati_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `no9ati_db`;
 -- --------------------------------------------------------
 
 --
@@ -1091,6 +1092,7 @@ CREATE TABLE `v_class_available_templates` (
 -- (See below for the actual view)
 --
 CREATE TABLE `v_controle_templates` (
+`id` INT
 );
 
 -- --------------------------------------------------------
@@ -1132,7 +1134,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 DROP TABLE IF EXISTS `v_controle_templates`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_controle_templates`  AS SELECT `t`.`id` AS `id`, `t`.`title` AS `title`, `t`.`year_level_id` AS `year_level_id`, `t`.`total_points` AS `total_points`, `t`.`description` AS `description`, `t`.`created_by` AS `created_by`, `t`.`is_active` AS `is_active`, `t`.`created_at` AS `created_at`, `t`.`updated_at` AS `updated_at`, `y`.`name` AS `year_level_name`, count(`p`.`id`) AS `phase_count`, coalesce(sum(`p`.`percentage`),0) AS `total_percentage` FROM ((`controle_templates` `t` left join `year_levels` `y` on(`t`.`year_level_id` = `y`.`id`)) left join `controle_template_phases` `p` on(`t`.`id` = `p`.`template_id`)) GROUP BY `t`.`id` ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_controle_templates`  AS SELECT `t`.`id` AS `id`, `t`.`title` AS `title`, `t`.`year_level_id` AS `year_level_id`, `t`.`total_points` AS `total_points`, `t`.`description` AS `description`, `t`.`created_by` AS `created_by`, `t`.`is_active` AS `is_active`, `t`.`created_at` AS `created_at`, `t`.`updated_at` AS `updated_at`, `y`.`name` AS `year_level_name`, count(`p`.`id`) AS `phase_count`, coalesce(sum(`p`.`points`),0) AS `total_percentage` FROM ((`controle_templates` `t` left join `year_levels` `y` on(`t`.`year_level_id` = `y`.`id`)) left join `controle_template_phases` `p` on(`t`.`id` = `p`.`template_id`)) GROUP BY `t`.`id` ;
 
 --
 -- Indexes for dumped tables
