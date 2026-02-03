@@ -42,6 +42,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/toast.css">
     
     <!-- PWA CSS -->
     <style>

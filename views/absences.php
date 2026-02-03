@@ -459,7 +459,11 @@ if ($selected_class_id > 0) {
                                                     <line x1="8" y1="2" x2="8" y2="6"></line>
                                                     <line x1="3" y1="10" x2="21" y2="10"></line>
                                                 </svg>
-                                                <?php echo date('l d F Y'); ?>
+                                                <?php 
+                                                    $days_fr = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+                                                    $months_fr = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+                                                    echo $days_fr[date('w')] . ' ' . date('d') . ' ' . $months_fr[date('n')] . ' ' . date('Y');
+                                                ?>
                                             </p>
                                         </div>
                                         <span class="badge" style="background: rgba(0,0,0,0.06); color: #1c1c1c; font-size: 13px; font-weight: 500; padding: 8px 12px; border-radius: 8px;">
@@ -575,10 +579,14 @@ if ($selected_class_id > 0) {
                             </div>
                         <?php endif; ?>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Submission History Table -->
-                    <?php if ($selected_class_id > 0 && !empty($submission_history)): ?>
-                    <div class="card mt-4" style="border-radius: 20px; border: 1px solid rgba(0, 0, 0, 0.06); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04); background: #fff;">
+            <!-- Submission History Table -->
+            <?php if ($selected_class_id > 0 && !empty($submission_history)): ?>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card" style="border-radius: 20px; border: 1px solid rgba(0, 0, 0, 0.06); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04); background: #fff;">
                         <div class="card-body p-4">
                             <h3 style="font-size: 16px; font-weight: 600; color: #1c1c1c; margin-bottom: 16px;">
                                 <svg class="me-2" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -637,9 +645,9 @@ if ($selected_class_id > 0) {
                             </div>
                         </div>
                     </div>
-                    <?php endif; ?>
                 </div>
             </div>
+            <?php endif; ?>
         </main>
     </div>
 
