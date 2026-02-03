@@ -38,6 +38,7 @@ class Database {
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 nom VARCHAR(50) NOT NULL,
                 enseignant_id INT NOT NULL,
+                year_level_id INT DEFAULT NULL COMMENT 'Reference to year_levels table',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (enseignant_id) REFERENCES enseignants(id) ON DELETE CASCADE
             )",

@@ -17,6 +17,12 @@
             'add_student' => 'Ajouter un élève',
             'import_students' => 'Importer des élèves',
             'points_log' => 'Historique des points',
+            'absences' => 'Absences',
+            'teams' => 'Équipes',
+            'controles' => 'Contrôles',
+            'controle_edit' => 'Modifier Contrôle',
+            'controle_notes' => 'Saisie des Notes',
+            'controle_results' => 'Résultats',
             'profile' => 'Mon profil',
             'generate_certificate' => 'Génération de certificat'
         ];
