@@ -5,19 +5,54 @@ if (!isset($_SESSION['teacher_id'])) {
 }
 
 require_once 'classes/ClassRoom.php';
+require_once 'classes/Controle.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
 $classroom = new ClassRoom($db);
+$controle = new Controle($db);
 
 $message = '';
 $error = '';
+
+// Get year levels for dropdowns
+$year_levels = $controle->getYearLevels($_SESSION['teacher_id']);
+
+// Handle year level creation
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_year_level'])) {
+    $name = $_POST['year_name'] ?? '';
+    $short_name = $_POST['year_short_name'] ?? '';
+    $order_index = $_POST['year_order'] ?? 0;
+    
+    if (empty($name)) {
+        $error = 'Le nom du niveau est requis.';
+    } else {
+        if ($controle->createYearLevel($name, $short_name, $order_index, $_SESSION['teacher_id'])) {
+            $message = 'Niveau d\'année créé avec succès!';
+            $year_levels = $controle->getYearLevels($_SESSION['teacher_id']); // Refresh
+        } else {
+            $error = 'Erreur lors de la création du niveau.';
+        }
+    }
+}
+
+// Handle year level deletion
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_year_level'])) {
+    $year_id = $_POST['year_level_id'] ?? 0;
+    if ($controle->deleteYearLevel($year_id)) {
+        $message = 'Niveau supprimé avec succès!';
+        $year_levels = $controle->getYearLevels($_SESSION['teacher_id']); // Refresh
+    } else {
+        $error = 'Impossible de supprimer ce niveau (utilisé par des classes ou modèles).';
+    }
+}
 
 // Handle class creation
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create_class'])) {
     $classroom->nom = $_POST['nom'] ?? '';
     $classroom->enseignant_id = $_SESSION['teacher_id'];
+    $classroom->year_level_id = !empty($_POST['year_level_id']) ? $_POST['year_level_id'] : null;
     
     if (empty($classroom->nom)) {
         $error = 'Le nom de la classe est requis.';
@@ -48,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_class'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_class'])) {
     $classroom->id = $_POST['class_id'] ?? 0;
     $classroom->nom = $_POST['nom'] ?? '';
+    $classroom->year_level_id = !empty($_POST['year_level_id']) ? $_POST['year_level_id'] : null;
     $classroom->enseignant_id = $_SESSION['teacher_id'];
     
     if (empty($classroom->nom)) {
@@ -145,6 +181,7 @@ $classes = $classes_stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <thead>
                                             <tr>
                                                 <th style="font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 16px;">Nom de la classe</th>
+                                                <th class="text-center" style="font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 16px;">Année</th>
                                                 <th class="text-center" style="font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 16px;">Nombre d'élèves</th>
                                                 <th class="text-center" style="font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 16px;">Points totaux</th>
                                                 <th class="text-center" style="font-size: 12px; font-weight: 500; color: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 12px 16px;">Date de création</th>
@@ -158,10 +195,18 @@ $classes = $classes_stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 require_once 'classes/PointSystem.php';
                                                 $pointSystem = new PointSystem($db);
                                                 $total_points = $pointSystem->getTotalPointsByClass($class['id']);
+                                                $year_level_name = $class['year_level_name'] ?? 'Non défini';
                                                 ?>
                                                 <tr>
                                                     <td style="padding: 16px; border-bottom: 1px solid rgba(0,0,0,0.1); font-size: 14px; color: #1c1c1c;">
                                                         <strong><?php echo htmlspecialchars($class['nom']); ?></strong>
+                                                    </td>
+                                                    <td class="text-center" style="padding: 16px; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                                                        <?php if ($class['year_level_id']): ?>
+                                                            <span style="background: #fef3c7; color: #d97706; font-size: 12px; font-weight: 500; padding: 4px 8px; border-radius: 8px;"><?php echo htmlspecialchars($year_level_name); ?></span>
+                                                        <?php else: ?>
+                                                            <span style="background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.4); font-size: 12px; font-weight: 500; padding: 4px 8px; border-radius: 8px;">Non défini</span>
+                                                        <?php endif; ?>
                                                     </td>
                                                     <td class="text-center" style="padding: 16px; border-bottom: 1px solid rgba(0,0,0,0.1);">
                                                         <span style="background: #edeefc; color: #6366f1; font-size: 12px; font-weight: 500; padding: 4px 8px; border-radius: 8px;"><?php echo $student_count; ?></span>
@@ -181,6 +226,7 @@ $classes = $classes_stmt->fetchAll(PDO::FETCH_ASSOC);
                                                             <button class="btn btn-sm edit-class-btn" 
                                                                     data-class-id="<?php echo $class['id']; ?>"
                                                                     data-class-name="<?php echo htmlspecialchars($class['nom']); ?>"
+                                                                    data-class-year-id="<?php echo $class['year_level_id'] ?? ''; ?>"
                                                                     style="background: rgba(0,0,0,0.04); color: #1c1c1c; border: none; border-radius: 8px; font-size: 12px; padding: 4px 12px;">
                                                                 Modifier
                                                             </button>
@@ -202,7 +248,83 @@ $classes = $classes_stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 </div>
             </div>
+            
+            <!-- Year Levels Management Card -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card" style="background: #fff; border-radius: 20px; border: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="background: transparent; border: none; padding: 24px; padding-bottom: 16px;">
+                            <h2 style="font-size: 14px; font-weight: 600; color: #1c1c1c; margin: 0;">Niveaux d'année</h2>
+                            <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#createYearLevelModal" style="background: #1c1c1c; color: #fff; border-radius: 8px; font-size: 12px; padding: 4px 12px;">
+                                + Ajouter un niveau
+                            </button>
+                        </div>
+                        <div class="card-body" style="padding: 24px; padding-top: 0;">
+                            <?php if (empty($year_levels)): ?>
+                                <p class="text-muted text-center py-3">Aucun niveau d'année créé. Créez-en un pour organiser vos classes et modèles de contrôle.</p>
+                            <?php else: ?>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <?php foreach ($year_levels as $yl): ?>
+                                        <div class="d-flex align-items-center gap-2 px-3 py-2" style="background: #fef3c7; border-radius: 8px;">
+                                            <span style="color: #d97706; font-size: 14px; font-weight: 500;">
+                                                <?php echo htmlspecialchars($yl['name']); ?>
+                                                <?php if ($yl['short_name']): ?>
+                                                    <small style="color: #92400e;">(<?php echo htmlspecialchars($yl['short_name']); ?>)</small>
+                                                <?php endif; ?>
+                                            </span>
+                                            <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer ce niveau ?');">
+                                                <input type="hidden" name="year_level_id" value="<?php echo $yl['id']; ?>">
+                                                <button type="submit" name="delete_year_level" class="btn btn-sm p-0" style="background: none; border: none; color: #ef4444;">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
+    </div>
+    
+    <!-- Create Year Level Modal -->
+    <div class="modal fade" id="createYearLevelModal" tabindex="-1" aria-labelledby="createYearLevelModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title h5" id="createYearLevelModalLabel">Créer un niveau d'année</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <form method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="year_name" class="form-label">Nom du niveau</label>
+                            <input type="text" name="year_name" id="year_name" class="form-control" 
+                                   placeholder="Ex: 1ère Année, Master 1, Licence 3..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="year_short_name" class="form-label">Abréviation (optionnel)</label>
+                            <input type="text" name="year_short_name" id="year_short_name" class="form-control" 
+                                   placeholder="Ex: 1A, M1, L3...">
+                        </div>
+                        <div class="mb-3">
+                            <label for="year_order" class="form-label">Ordre d'affichage</label>
+                            <input type="number" name="year_order" id="year_order" class="form-control" 
+                                   value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" name="create_year_level" class="btn btn-primary">Créer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     
     <!-- Create Class Modal -->
@@ -219,6 +341,18 @@ $classes = $classes_stmt->fetchAll(PDO::FETCH_ASSOC);
                             <label for="nom" class="form-label">Nom de la classe</label>
                             <input type="text" name="nom" id="nom" class="form-control" 
                                    placeholder="Ex: 6ème A, CM2 B..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="year_level_id" class="form-label">Niveau d'année</label>
+                            <select name="year_level_id" id="year_level_id" class="form-select">
+                                <option value="">-- Sélectionner un niveau --</option>
+                                <?php foreach ($year_levels as $yl): ?>
+                                    <option value="<?php echo $yl['id']; ?>"><?php echo htmlspecialchars($yl['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?php if (empty($year_levels)): ?>
+                                <small class="text-muted">Vous devez d'abord créer des niveaux d'année.</small>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -244,6 +378,15 @@ $classes = $classes_stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="mb-3">
                             <label for="edit_nom" class="form-label">Nom de la classe</label>
                             <input type="text" name="nom" id="edit_nom" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_year_level_id" class="form-label">Niveau d'année</label>
+                            <select name="year_level_id" id="edit_year_level_id" class="form-select">
+                                <option value="">-- Sélectionner un niveau --</option>
+                                <?php foreach ($year_levels as $yl): ?>
+                                    <option value="<?php echo $yl['id']; ?>"><?php echo htmlspecialchars($yl['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -288,9 +431,11 @@ $classes = $classes_stmt->fetchAll(PDO::FETCH_ASSOC);
             btn.addEventListener('click', () => {
                 const classId = btn.dataset.classId;
                 const className = btn.dataset.className;
+                const classYearId = btn.dataset.classYearId || '';
                 
                 document.getElementById('edit_class_id').value = classId;
                 document.getElementById('edit_nom').value = className;
+                document.getElementById('edit_year_level_id').value = classYearId;
                 
                 const modal = new bootstrap.Modal(document.getElementById('editClassModal'));
                 modal.show();

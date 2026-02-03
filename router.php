@@ -13,6 +13,18 @@ class Router {
         'generate_certificate' => 'views/generate_certificate.php',
         'manage_classes' => 'views/manage_classes.php',
         'teams' => 'views/teams.php',
+        // Old controles routes (kept for backward compatibility)
+        'controles' => 'views/controles.php',
+        'controle_edit' => 'views/controle_edit.php',
+        'controle_notes' => 'views/controle_notes.php',
+        'controle_results' => 'views/controle_results.php',
+        // New controles system with templates
+        'controle_templates' => 'views/controle_templates.php',
+        'controle_template_edit' => 'views/controle_template_edit.php',
+        'controle_fill_points' => 'views/controle_fill_points.php',
+        'controle_fill_notes' => 'views/controle_fill_notes.php',
+        'controle_instance_results' => 'views/controle_instance_results.php',
+        'certificates' => 'views/certificates.php',
         'profile' => 'views/profile.php',
         'logout' => 'views/logout.php',
         'error' => 'views/error.php'

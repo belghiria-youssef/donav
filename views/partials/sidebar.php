@@ -74,6 +74,35 @@
             Équipes
         </a>
 
+        <!-- Contrôles Section with submenu -->
+        <div style="font-size: 12px; color: rgba(0,0,0,0.4); padding: 8px 12px; margin-top: 12px;">Contrôles</div>
+
+        <a href="index.php?page=controle_templates" class="nav-link d-flex align-items-center <?php echo in_array($_GET['page'] ?? '', ['controle_templates', 'controle_template_edit']) ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo in_array($_GET['page'] ?? '', ['controle_templates', 'controle_template_edit']) ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
+            <svg class="me-2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            Modèles
+        </a>
+
+        <a href="index.php?page=controle_fill_points" class="nav-link d-flex align-items-center <?php echo in_array($_GET['page'] ?? '', ['controle_fill_points', 'controle_fill_notes', 'controle_instance_results']) ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo in_array($_GET['page'] ?? '', ['controle_fill_points', 'controle_fill_notes', 'controle_instance_results']) ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
+            <svg class="me-2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Saisie des Notes
+        </a>
+
+        <a href="index.php?page=certificates" class="nav-link d-flex align-items-center <?php echo ($_GET['page'] ?? '') === 'certificates' ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo ($_GET['page'] ?? '') === 'certificates' ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
+            <svg class="me-2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="7"></circle>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+            </svg>
+            Certificats
+        </a>
+
         <a href="index.php?page=profile" class="nav-link d-flex align-items-center <?php echo ($_GET['page'] ?? '') === 'profile' ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo ($_GET['page'] ?? '') === 'profile' ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
             <svg class="me-2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -168,6 +197,34 @@
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
                 Équipes
+            </a>
+
+            <div style="font-size: 12px; color: rgba(0,0,0,0.4); padding: 8px 12px; margin-top: 12px;">Contrôles</div>
+
+            <a href="index.php?page=controle_templates" class="nav-link d-flex align-items-center <?php echo in_array($_GET['page'] ?? '', ['controle_templates', 'controle_template_edit']) ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo in_array($_GET['page'] ?? '', ['controle_templates', 'controle_template_edit']) ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
+                <svg class="me-2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+                Modèles
+            </a>
+
+            <a href="index.php?page=controle_fill_points" class="nav-link d-flex align-items-center <?php echo in_array($_GET['page'] ?? '', ['controle_fill_points', 'controle_fill_notes', 'controle_instance_results']) ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo in_array($_GET['page'] ?? '', ['controle_fill_points', 'controle_fill_notes', 'controle_instance_results']) ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
+                <svg class="me-2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Saisie des Notes
+            </a>
+
+            <a href="index.php?page=certificates" class="nav-link d-flex align-items-center <?php echo ($_GET['page'] ?? '') === 'certificates' ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo ($_GET['page'] ?? '') === 'certificates' ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
+                <svg class="me-2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+                Certificats
             </a>
 
             <a href="index.php?page=profile" class="nav-link d-flex align-items-center <?php echo ($_GET['page'] ?? '') === 'profile' ? 'active' : ''; ?>" style="color: #1c1c1c; padding: 8px 12px; border-radius: 12px; font-size: 14px; <?php echo ($_GET['page'] ?? '') === 'profile' ? 'background: rgba(0,0,0,0.04);' : ''; ?>">
